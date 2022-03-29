@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Form validator</title>
+	<link rel="stylesheet" type="text/css" href="node_modules/bootstrap/dist/css/bootstrap.min.css">
+	<style type="text/css">
+		
+		.error{
+			border: red 1 px solid;
+		}
+
+	</style>
+</head>
+<body>
+
+	<div class="container d-flex justify-content-center mt-3">
+		<div class="col-6">
+			<form id="form">
+			  <div class="form-group">
+			    <label for="user_name">User Name</label>
+			    <input type="text" class="form-control" id="user_name" placeholder="Enter User Name">
+			  </div>
+			  <div class="form-group">
+			    <label for="email">Email address</label>
+			    <input type="text" class="form-control" id="email" placeholder="Enter Email">
+			  </div>
+			  <div class="form-group">
+			    <label for="phone">Phone</label>
+			    <input type="text" class="form-control" id="phone"  placeholder="Enter Phone">
+			  </div>
+			  <div class="form-group">
+			    <label for="password">Password</label>
+			    <input type="password" class="form-control" id="password" placeholder="Password">
+			  </div>
+			   <div class="form-group">
+			    <label for="repassword">Password again</label>
+			    <input type="password" class="form-control" id="repassword" placeholder="Re-Password">
+			  </div>
+			   <div class="form-group response" style="margin: 10px;">
+			    
+			  </div>
+			  <button type="submit" class="btn btn-primary">Register</button>
+			</form>
+		</div>
+	</div>
+
+	<script type="text/javascript" src="node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
+
+	<script type="text/javascript">
+		const form 		 = document.getElementById("form");
+		const user_name  = document.getElementById("user_name");
+		const email 	 = document.getElementById("email");
+		const phone      = document.getElementById("phone");
+		const password 	 = document.getElementById("password");
+		const repassword = document.getElementById("repassword");
+
+		form.addEventListener("submit", function(e){
+			e.preventDefault();
+			conditions = {
+				phone: [phone.value, "number", "min:3", "max:6", "required"],
+				email: [email.value, "email", "min:3", "max:6", "required"],
+			}
+			
+			validate = validator(conditions);
+			errors = "";
+
+			if(validate['success']==0){
+				for (var i = 0; i <= JSON.parse(validate['descr']).length - 1; i++) {
+					errors += JSON.parse(validate['descr'])[i] +"<br>";
+				}
+
+				document.querySelector(".response").innerHTML = errors;
+			}
+
+		});
+
+
+		function validator(conditions) {
+
+			var resp_arr = [];
+
+			for(column in conditions){				
+
+				var value = conditions[column][0];
+
+				for (var i = 1; i <= conditions[column].length - 1; i++) {
+					type = conditions[column][i];
+					if(type=="email")
+					{
+						simvol = value.indexOf("@");
+						if (simvol<0 || (simvol>=0 && (value[simvol-1]==undefined || value[simvol+1]==undefined)))
+						{
+							resp_arr.push(err_list(type));
+						}
+					}
+					if(type=="number")
+					{
+						if (!Number(value)) {
+							resp_arr.push(err_list(type));
+						}
+					}
+					if(type=="required")
+					{
+						if (value=="") {
+							resp_arr.push(err_list(type));
+						}
+					}
+					if(min_match = type.match(/(min):([0-9])/))
+					{
+						min = min_match[2];
+						if (value.length<min) {							
+							resp_arr.push(err_list(type));
+						}
+					}
+					if(max_match = type.match(/(max):([0-9])/))
+					{
+						max = max_match[2];
+						if (value.length>max) {
+							resp_arr.push(err_list(type));
+						}
+					}
+				}
+			}
+
+			if(resp_arr.length>0){
+				response = {"success":0, "error":1, "descr": JSON.stringify(resp_arr)};
+			}else{
+				response = {"success":1, "error":0, "descr": "Operation is completed successfully"}
+			}
+
+			return response;
+		}
+
+		function err_list(type) {
+
+			const list = {
+				"email": column+" value's format must be email",	
+				"number": column+" value's format must be number",				
+				"required": column+" value is required",
+			};
+
+			if (min = type.match(/(min):([0-9])/))
+			{
+				return column+" value's must be larger than "+min[2];
+
+			}else if(max = type.match(/(max):([0-9])/)){
+				return column+" value's must be lesser than "+max[2];
+			} 
+			else{
+				return list[type];
+			}
+			
+
+		}
+	</script>
+
+</body>
+</html>
