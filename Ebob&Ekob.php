@@ -1,30 +1,12 @@
 <?php
-// Enter your code here, enjoy!
 
-function divisors($val)
-{
-	$arr = [];
-	for($i=2; $i<=$val*0.5; $i++)
-	{
-		if($val%$i==0 && ($i%2!=0 || $i==2)){
-			$arr[]=$i;
-		}
-	}
-	
-	if($val%$val==0 && $val%2!=0){
-		$arr[]=$val;
-	}
-
-	return $arr;
-}
-
-function divisors2($val){
+function divisors($val){
 	
 	$arr = [];
 	
 	for($i=2; $i<=$val; $i++){
 		$check = 0;
-		for($j=2; $j<$i; $j++){
+		for($j=2; $j<$i; $j+=2){
 			if($i%$j==0){
 				$check = 1;
 				break;
