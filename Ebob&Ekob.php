@@ -18,6 +18,26 @@ function divisors($val)
 	return $arr;
 }
 
+function divisors2($val){
+	
+	$arr = [];
+	
+	for($i=2; $i<=$val; $i++){
+		$check = 0;
+		for($j=2; $j<$i; $j++){
+			if($i%$j==0){
+				$check = 1;
+				break;
+			}
+		}
+		if(!$check){
+			$arr[] = $i;
+		}
+	}
+	return $arr;
+}
+
+
 function divide($val)
 {
 	$divisors = divisors($val);
